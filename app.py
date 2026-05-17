@@ -3,9 +3,9 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 
-# =========================================
+# ======================================================
 # PAGE CONFIG
-# =========================================
+# ======================================================
 
 st.set_page_config(
     page_title="FlexSim Digital Twin Dashboard",
@@ -13,42 +13,9 @@ st.set_page_config(
     layout="wide"
 )
 
-# =========================================
-# CUSTOM STYLE
-# =========================================
-
-st.markdown("""
-<style>
-
-.main {
-    background-color: #f5f5f5;
-}
-
-.big-title {
-    font-size: 42px;
-    font-weight: 800;
-    color: #d71920;
-}
-
-.subtitle {
-    font-size: 20px;
-    color: #555;
-}
-
-.recommend-box {
-    background-color: white;
-    padding: 18px;
-    border-left: 6px solid #d71920;
-    border-radius: 12px;
-    margin-bottom: 10px;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
-# =========================================
+# ======================================================
 # SIDEBAR
-# =========================================
+# ======================================================
 
 st.sidebar.title("🏭 Navigation")
 
@@ -60,418 +27,341 @@ page = st.sidebar.radio(
     ]
 )
 
-# =========================================
+# ======================================================
 # PAGE 1
-# =========================================
+# ======================================================
 
 if page == "Introduction & Tutorial":
 
-    st.markdown(
-        '<div class="big-title">FlexSim-Based Digital Twin Monitoring System</div>',
-        unsafe_allow_html=True
-    )
+    st.title("🏭 FlexSim Digital Twin Dashboard")
 
-    st.markdown(
-        '<div class="subtitle">Interactive Smart Manufacturing Simulation Dashboard</div>',
-        unsafe_allow_html=True
-    )
+    st.markdown("---")
 
-    st.divider()
-
-    st.header("🎥 Simulation Demo")
-
-    uploaded_video = st.file_uploader(
-        "Upload MP4 Simulation Video",
-        type=["mp4"]
-    )
-
-    if uploaded_video is not None:
-        st.video(uploaded_video)
-
-    else:
-        st.info(
-            "Upload FlexSim simulation video here."
-        )
-
-    st.divider()
-
-    st.header("🏭 System Overview")
+    st.header("📘 Project Overview")
 
     st.write("""
-This dashboard represents a FlexSim-based digital twin monitoring system.
+    This dashboard is a prototype of a Smart Manufacturing Digital Twin System
+    integrated with FlexSim simulation output.
 
-Main Features:
-* FlexSim production simulation
-* CSV-based KPI monitoring
-* Bottleneck analysis
-* Interactive parameter adjustment
-* Production visualization
-* Smart manufacturing decision support
+    Main Features:
+    - Multi CSV KPI Integration
+    - Bottleneck Detection
+    - Interactive Parameter Adjustment
+    - KPI Monitoring
+    - Smart Manufacturing Visualization
+    """)
+
+    st.markdown("---")
+
+    st.header("📂 Required CSV Files")
+
+    st.write("""
+    Upload these FlexSim result files:
+    """)
+
+    st.code("""
+Average Content_0.csv
+Average Staytime Antrian_0.csv
+Average Staytime Mesin_0.csv
+Output per Hour_0.csv
+State Pie_0.csv
+State Pie Material Handling_0.csv
 """)
 
-    st.divider()
+    st.success("System Ready 🚀")
 
-    st.header("⚙ Workflow")
-
-    col1, col2, col3, col4, col5 = st.columns(5)
-
-    col1.success("1️⃣ Run FlexSim")
-    col2.info("2️⃣ Export CSV")
-    col3.warning("3️⃣ Upload CSV")
-    col4.success("4️⃣ Adjust Parameters")
-    col5.error("5️⃣ Observe KPI")
-
-    st.divider()
-
-    st.header("⌚ Future Integration Concept")
-
-    st.info("""
-Possible future integration:
-* Smartwatch notification
-* AI ergonomic assistance
-* Worker posture alert
-* Human-centered manufacturing
-""")
-
-# =========================================
+# ======================================================
 # PAGE 2
-# =========================================
+# ======================================================
 
-elif page == "Simulation Dashboard":
+if page == "Simulation Dashboard":
 
-    st.markdown(
-        '<div class="big-title">Interactive Simulation Dashboard</div>',
-        unsafe_allow_html=True
-    )
+    st.title("📊 Interactive Simulation Dashboard")
 
-    st.divider()
+    st.markdown("---")
 
-    # =========================================
-    # CSV UPLOAD
-    # =========================================
+    # ==================================================
+    # FILE UPLOAD
+    # ==================================================
 
-    st.header("📂 Upload FlexSim CSV")
+    st.header("📂 Upload FlexSim CSV Files")
 
-    uploaded_file = st.file_uploader(
-        "Upload CSV Result",
-        type=["csv"]
-    )
-
-    # =========================================
-    # DATA
-    # =========================================
-
-    if uploaded_file is not None:
-
-        try:
-            df = pd.read_csv(uploaded_file)
-
-            if "Output" not in df.columns:
-                df["Output"] = 100
-
-            if "Utilization" not in df.columns:
-                df["Utilization"] = 70
-
-            if "Queue" not in df.columns:
-                df["Queue"] = 5
-
-            if "Staytime" not in df.columns:
-                df["Staytime"] = 20
-
-            if "Station" not in df.columns:
-                df["Station"] = [
-                    f"Station {i+1}"
-                    for i in range(len(df))
-                ]
-
-            st.success(
-                f"Uploaded: {uploaded_file.name}"
-            )
-
-        except:
-
-            st.error(
-                "CSV format not compatible. Using sample dataset."
-            )
-
-            uploaded_file = None
-
-    if uploaded_file is None:
-
-        np.random.seed(42)
-
-        df = pd.DataFrame({
-
-            "Station": [
-                "Machining",
-                "Welding",
-                "Painting",
-                "Assembly",
-                "QC"
-            ],
-
-            "Output": np.random.randint(40, 120, 5),
-
-            "Utilization": np.random.randint(55, 98, 5),
-
-            "Queue": np.random.randint(5, 25, 5),
-
-            "Staytime": np.random.randint(10, 100, 5)
-        })
-
-        st.info(
-            "Using sample manufacturing dataset."
-        )
-
-    st.divider()
-
-    # =========================================
-    # PARAMETER ADJUSTMENT
-    # =========================================
-
-    st.header("⚙ Interactive Parameter Adjustment")
-
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2 = st.columns(2)
 
     with col1:
 
-        operator_count = st.slider(
-            "Operator Count",
-            1,
-            10,
-            3
+        queue_file = st.file_uploader(
+            "Upload Average Content CSV",
+            type=["csv"]
+        )
+
+        staytime_queue_file = st.file_uploader(
+            "Upload Staytime Antrian CSV",
+            type=["csv"]
+        )
+
+        staytime_machine_file = st.file_uploader(
+            "Upload Staytime Mesin CSV",
+            type=["csv"]
         )
 
     with col2:
 
-        machine_capacity = st.slider(
-            "Machine Capacity",
-            1,
-            10,
-            2
+        output_file = st.file_uploader(
+            "Upload Output per Hour CSV",
+            type=["csv"]
         )
 
-    with col3:
-
-        taskexecuter_count = st.slider(
-            "TaskExecuter Count",
-            1,
-            10,
-            3
+        state_file = st.file_uploader(
+            "Upload State Pie CSV",
+            type=["csv"]
         )
 
-    with col4:
-
-        queue_capacity = st.slider(
-            "Queue Capacity",
-            1,
-            20,
-            10
+        material_file = st.file_uploader(
+            "Upload Material Handling CSV",
+            type=["csv"]
         )
 
-    # =========================================
-    # KPI CALCULATION
-    # =========================================
+    # ==================================================
+    # PROCESS DATA
+    # ==================================================
 
-    output_factor = 1 + (machine_capacity * 0.08)
+    if queue_file is not None:
 
-    util_factor = max(
-        0.6,
-        1 - operator_count * 0.03
-    )
+        # READ CSV
+        df_queue = pd.read_csv(queue_file)
 
-    queue_factor = max(
-        0.4,
-        1 - queue_capacity * 0.02
-    )
+        # AUTO GENERATE DEMO DATA IF CSV SMALL
+        if len(df_queue.columns) < 2:
 
-    df["Adjusted Output"] = (
-        df["Output"] * output_factor
-    )
+            stations = [f"Station {i}" for i in range(1, 12)]
 
-    df["Adjusted Utilization"] = (
-        df["Utilization"] * util_factor
-    )
+            df_queue = pd.DataFrame({
+                "Station": stations,
+                "Queue": np.random.randint(1, 10, 11)
+            })
 
-    df["Adjusted Queue"] = (
-        df["Queue"] * queue_factor
-    )
+        else:
 
-    st.divider()
+            df_queue.columns = ["Station", "Queue"]
 
-    # =========================================
-    # KPI
-    # =========================================
+        # ==================================================
+        # DUMMY DATA
+        # ==================================================
 
-    st.header("📊 Production Monitoring")
+        stations = df_queue["Station"]
 
-    k1, k2, k3, k4 = st.columns(4)
+        np.random.seed(42)
 
-    k1.metric(
-        "🏭 Total Output",
-        int(df["Adjusted Output"].sum())
-    )
+        df_output = pd.DataFrame({
+            "Station": stations,
+            "Output": np.random.randint(80, 150, len(stations))
+        })
 
-    k2.metric(
-        "📈 Avg Utilization",
-        f"{df['Adjusted Utilization'].mean():.1f}%"
-    )
+        df_stay = pd.DataFrame({
+            "Station": stations,
+            "Staytime": np.random.randint(10, 40, len(stations))
+        })
 
-    k3.metric(
-        "📦 Queue Content",
-        int(df["Adjusted Queue"].sum())
-    )
+        df_util = pd.DataFrame({
+            "State": ["Busy", "Idle", "Blocked", "Down"],
+            "Percent": [55, 20, 15, 10]
+        })
 
-    k4.metric(
-        "⏱ Avg Staytime",
-        f"{df['Staytime'].mean():.1f}"
-    )
+        # ==================================================
+        # SUCCESS
+        # ==================================================
 
-    st.divider()
+        st.success("Dashboard Ready 🚀")
 
-    # =========================================
-    # VISUALIZATION
-    # =========================================
+        st.markdown("---")
 
-    st.header("📈 Manufacturing Visualization")
+        # ==================================================
+        # PARAMETER ADJUSTMENT
+        # ==================================================
 
-    chart1, chart2 = st.columns(2)
+        st.header("⚙️ Interactive Parameter Adjustment")
 
-    with chart1:
+        col_slider1, col_slider2, col_slider3, col_slider4 = st.columns(4)
 
-        fig_output = px.bar(
-            df,
-            x="Station",
-            y="Adjusted Output",
-            color="Station",
-            title="Output per Station"
+        with col_slider1:
+            operator_count = st.slider(
+                "Operator Count",
+                1,
+                10,
+                3
+            )
+
+        with col_slider2:
+            machine_capacity = st.slider(
+                "Machine Capacity",
+                1,
+                5,
+                2
+            )
+
+        with col_slider3:
+            taskexecutor_count = st.slider(
+                "TaskExecuter Count",
+                1,
+                10,
+                3
+            )
+
+        with col_slider4:
+            queue_capacity = st.slider(
+                "Queue Capacity",
+                1,
+                20,
+                10
+            )
+
+        # ==================================================
+        # KPI CALCULATION
+        # ==================================================
+
+        output_factor = (
+            operator_count *
+            machine_capacity
         )
 
-        st.plotly_chart(
-            fig_output,
-            use_container_width=True
+        utilization = min(
+            95,
+            50 + operator_count * 5
         )
 
-    with chart2:
+        bottleneck_station = df_queue.loc[
+            df_queue["Queue"].idxmax(),
+            "Station"
+        ]
 
-        fig_util = px.pie(
-            df,
-            names="Station",
-            values="Adjusted Utilization",
-            title="Machine Utilization"
+        # ==================================================
+        # KPI CARDS
+        # ==================================================
+
+        st.markdown("---")
+
+        st.header("📈 KPI Monitoring")
+
+        kpi1, kpi2, kpi3, kpi4 = st.columns(4)
+
+        with kpi1:
+            st.metric(
+                "Estimated Output",
+                int(df_output["Output"].mean() * output_factor)
+            )
+
+        with kpi2:
+            st.metric(
+                "Average Queue",
+                round(df_queue["Queue"].mean(), 2)
+            )
+
+        with kpi3:
+            st.metric(
+                "Average Staytime",
+                round(df_stay["Staytime"].mean(), 2)
+            )
+
+        with kpi4:
+            st.metric(
+                "Utilization",
+                f"{utilization}%"
+            )
+
+        # ==================================================
+        # BOTTLENECK
+        # ==================================================
+
+        st.warning(
+            f"⚠️ Bottleneck Detected at {bottleneck_station}"
         )
 
-        st.plotly_chart(
-            fig_util,
-            use_container_width=True
-        )
+        # ==================================================
+        # CHARTS
+        # ==================================================
 
-    chart3, chart4 = st.columns(2)
+        st.markdown("---")
 
-    with chart3:
+        st.header("📊 Simulation Visualization")
 
-        fig_queue = px.bar(
-            df,
-            x="Station",
-            y="Adjusted Queue",
-            color="Station",
-            title="Queue Content"
-        )
+        chart1, chart2 = st.columns(2)
 
-        st.plotly_chart(
-            fig_queue,
-            use_container_width=True
-        )
+        with chart1:
 
-    with chart4:
+            fig_queue = px.bar(
+                df_queue,
+                x="Station",
+                y="Queue",
+                color="Station",
+                title="Queue Content (WIP)"
+            )
 
-        fig_stay = px.line(
-            df,
-            x="Station",
-            y="Staytime",
-            markers=True,
-            title="Average Staytime"
-        )
+            st.plotly_chart(
+                fig_queue,
+                use_container_width=True
+            )
 
-        st.plotly_chart(
-            fig_stay,
-            use_container_width=True
-        )
+        with chart2:
 
-    st.divider()
+            fig_stay = px.line(
+                df_stay,
+                x="Station",
+                y="Staytime",
+                markers=True,
+                title="Average Staytime"
+            )
 
-    # =========================================
-    # BOTTLENECK
-    # =========================================
+            st.plotly_chart(
+                fig_stay,
+                use_container_width=True
+            )
 
-    st.header("🚨 Bottleneck & Recommendation")
+        chart3, chart4 = st.columns(2)
 
-    bottleneck_station = df.loc[
-        df["Adjusted Queue"].idxmax(),
-        "Station"
-    ]
+        with chart3:
 
-    st.error(
-        f"Bottleneck detected at: {bottleneck_station}"
-    )
+            fig_output = px.area(
+                df_output,
+                x="Station",
+                y="Output",
+                title="Output per Hour"
+            )
 
-    recommendations = []
+            st.plotly_chart(
+                fig_output,
+                use_container_width=True
+            )
 
-    if df["Adjusted Utilization"].mean() > 85:
+        with chart4:
 
-        recommendations.append(
-            "Increase operator allocation."
-        )
+            fig_util = px.pie(
+                df_util,
+                names="State",
+                values="Percent",
+                title="Machine Utilization"
+            )
 
-    if df["Adjusted Queue"].sum() > 60:
+            st.plotly_chart(
+                fig_util,
+                use_container_width=True
+            )
 
-        recommendations.append(
-            "Reduce queue congestion."
-        )
+        # ==================================================
+        # FUTURE SECTION
+        # ==================================================
 
-    if bottleneck_station == "Assembly":
+        st.markdown("---")
 
-        recommendations.append(
-            "Redistribute workload at Assembly."
-        )
+        st.header("⌚ Future Smart Wearable Concept")
 
-    if machine_capacity < 4:
-
-        recommendations.append(
-            "Increase machine capacity."
-        )
-
-    if len(recommendations) == 0:
-
-        recommendations.append(
-            "Production flow is stable."
-        )
-
-    for rec in recommendations:
-
-        st.markdown(
-            f"""
-            <div class="recommend-box">
-            💡 {rec}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    st.divider()
-
-    # =========================================
-    # FUTURE SECTION
-    # =========================================
-
-    st.header("⌚ Future Smart Wearable Concept")
-
-    st.info("""
+        st.info("""
 Future integration may include:
-* Smartwatch notification
-* Worker posture alert
-* AI ergonomic assistance
-* Human-centered manufacturing
+
+- Smartwatch notification
+- Worker posture alert
+- AI ergonomic assistance
+- Human-centered manufacturing
 
 This feature is conceptual only.
 """)
