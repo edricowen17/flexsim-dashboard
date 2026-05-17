@@ -72,13 +72,12 @@ if page == "Introduction & Tutorial":
     )
 
     st.markdown(
-        '<div class="subtitle">Interactive Smart Manufacturing Simulation for Assembly Production Monitoring</div>',
+        '<div class="subtitle">Interactive Smart Manufacturing Simulation Dashboard</div>',
         unsafe_allow_html=True
     )
 
     st.divider()
 
-    # VIDEO
     st.header("🎥 Simulation Demo")
 
     uploaded_video = st.file_uploader(
@@ -91,30 +90,28 @@ if page == "Introduction & Tutorial":
 
     else:
         st.info(
-            "Upload FlexSim assembly simulation video here."
+            "Upload FlexSim simulation video here."
         )
 
     st.divider()
 
-    # OVERVIEW
     st.header("🏭 System Overview")
 
     st.write("""
-This dashboard represents a FlexSim-based digital twin monitoring system for automotive assembly manufacturing.
+This dashboard represents a FlexSim-based digital twin monitoring system.
 
 Main Features:
-- FlexSim production simulation
-- CSV-based monitoring
-- KPI visualization
-- Bottleneck analysis
-- Parameter adjustment
-- Smart manufacturing decision support
+* FlexSim production simulation
+* CSV-based KPI monitoring
+* Bottleneck analysis
+* Interactive parameter adjustment
+* Production visualization
+* Smart manufacturing decision support
 """)
 
     st.divider()
 
-    # TUTORIAL
-    st.header("⚙ Tutorial Workflow")
+    st.header("⚙ Workflow")
 
     col1, col2, col3, col4, col5 = st.columns(5)
 
@@ -126,17 +123,14 @@ Main Features:
 
     st.divider()
 
-    # FUTURE SECTION
     st.header("⌚ Future Integration Concept")
 
     st.info("""
-Future Industry 4.0 integration may include:
-- Smart wearable monitoring
-- AI ergonomic assistance
-- Smartwatch posture notification
-- Human-centered manufacturing support
-
-This section is presented as future integration concept only.
+Possible future integration:
+* Smartwatch notification
+* AI ergonomic assistance
+* Worker posture alert
+* Human-centered manufacturing
 """)
 
 # =========================================
@@ -172,11 +166,30 @@ elif page == "Simulation Dashboard":
         try:
             df = pd.read_csv(uploaded_file)
 
+            if "Output" not in df.columns:
+                df["Output"] = 100
+
+            if "Utilization" not in df.columns:
+                df["Utilization"] = 70
+
+            if "Queue" not in df.columns:
+                df["Queue"] = 5
+
+            if "Staytime" not in df.columns:
+                df["Staytime"] = 20
+
+            if "Station" not in df.columns:
+                df["Station"] = [
+                    f"Station {i+1}"
+                    for i in range(len(df))
+                ]
+
             st.success(
                 f"Uploaded: {uploaded_file.name}"
             )
 
         except:
+
             st.error(
                 "CSV format not compatible. Using sample dataset."
             )
@@ -188,6 +201,7 @@ elif page == "Simulation Dashboard":
         np.random.seed(42)
 
         df = pd.DataFrame({
+
             "Station": [
                 "Machining",
                 "Welding",
@@ -316,7 +330,7 @@ elif page == "Simulation Dashboard":
     st.divider()
 
     # =========================================
-    # CHARTS
+    # VISUALIZATION
     # =========================================
 
     st.header("📈 Manufacturing Visualization")
@@ -406,31 +420,31 @@ elif page == "Simulation Dashboard":
     if df["Adjusted Utilization"].mean() > 85:
 
         recommendations.append(
-            "Increase operator allocation to reduce excessive utilization."
+            "Increase operator allocation."
         )
 
     if df["Adjusted Queue"].sum() > 60:
 
         recommendations.append(
-            "Reduce queue congestion by improving synchronization flow."
+            "Reduce queue congestion."
         )
 
     if bottleneck_station == "Assembly":
 
         recommendations.append(
-            "Redistribute workload at Assembly Station."
+            "Redistribute workload at Assembly."
         )
 
     if machine_capacity < 4:
 
         recommendations.append(
-            "Increase machine capacity to improve throughput."
+            "Increase machine capacity."
         )
 
     if len(recommendations) == 0:
 
         recommendations.append(
-            "Production flow is currently stable."
+            "Production flow is stable."
         )
 
     for rec in recommendations:
@@ -454,10 +468,10 @@ elif page == "Simulation Dashboard":
 
     st.info("""
 Future integration may include:
-- Smartwatch notification
-- Worker posture alert
-- AI ergonomic assistance
-- Human-centered manufacturing
+* Smartwatch notification
+* Worker posture alert
+* AI ergonomic assistance
+* Human-centered manufacturing
 
-This feature is conceptual only and not directly generated from FlexSim simulation output.
+This feature is conceptual only.
 """)
